@@ -77,18 +77,28 @@ The application will be available at `http://localhost:5000`
 
 ## Deployment Options
 
-### 1. Vercel (Recommended for Full-Stack)
-**Important**: Due to WebSocket limitations on Vercel's serverless functions, consider these alternatives:
-- **For demo purposes**: Deploy frontend only to Vercel, backend elsewhere
-- **Better options**: Railway, Render, or DigitalOcean for full WebSocket support
-
-**If using Vercel**:
+### 1. Railway (Best for WebSocket Apps)
+**Recommended**: Full WebSocket support, PostgreSQL included
 - Push to GitHub repository
-- Connect to Vercel
-- Framework Preset: "Other"
+- Connect to Railway
+- Automatically detects Node.js
+- Add PostgreSQL database service
+- Environment variables auto-configured
+
+### 2. Render (Great Alternative)
+**Free Tier Available**: Excellent WebSocket support
+- Connect GitHub repository
+- Choose "Web Service"
+- Build Command: `npm run build`
+- Start Command: `npm start`
+- Add PostgreSQL database if needed
+
+### 3. Vercel (Frontend Only)
+**Limitation**: WebSocket functions don't work on serverless
+- Use only for static frontend demos
+- Framework: "Other"
 - Build Command: `npm run build`
 - Output Directory: `dist/public`
-- Install Command: `npm install`
 
 ### 2. Netlify
 - Build command: `npm run build`
