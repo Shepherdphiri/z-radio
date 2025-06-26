@@ -36,7 +36,7 @@ export type Listener = typeof listeners.$inferSelect;
 
 // WebSocket message types
 export interface WebSocketMessage {
-  type: 'join-room' | 'leave-room' | 'offer' | 'answer' | 'ice-candidate' | 'room-update';
+  type: 'join-room' | 'leave-room' | 'offer' | 'answer' | 'ice-candidate' | 'room-update' | 'listener-joined';
   roomId?: string;
   data?: any;
   sessionId?: string;

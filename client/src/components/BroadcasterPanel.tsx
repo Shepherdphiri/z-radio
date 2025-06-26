@@ -41,11 +41,21 @@ export function BroadcasterPanel({ onBroadcastStart, onBroadcastStop }: Broadcas
       const newRoomId = generateRoomId();
       
       // Create broadcast record
-      await apiRequest('POST', '/api/broadcasts', {
-        roomId: newRoomId,
-        title: `Broadcast ${newRoomId}`,
-        audioQuality,
+      const response = await fetch('/api/broadcasts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          roomId: newRoomId,
+          title: `Broadcast ${newRoomId}`,
+          audioQuality,
+        }),
       });
+
+      if (!response.ok) {
+        throw new Error('Failed to create broadcast');
+      }
 
       setRoomId(newRoomId);
       await startBroadcast();
@@ -57,6 +67,7 @@ export function BroadcasterPanel({ onBroadcastStart, onBroadcastStop }: Broadcas
         description: "Your broadcast is now live and listeners can join.",
       });
     } catch (error) {
+      console.error('Broadcast error:', error);
       toast({
         title: "Broadcast Failed",
         description: "Unable to start broadcast. Please check your microphone permissions.",

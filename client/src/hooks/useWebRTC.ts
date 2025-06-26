@@ -96,9 +96,12 @@ export function useWebRTC({ roomId, isBroadcaster }: UseWebRTCProps) {
   };
 
   const startBroadcast = async () => {
-    if (!roomId || !wsConnected) return;
+    if (!roomId) {
+      throw new Error('No room ID provided');
+    }
 
     try {
+      // Request microphone access
       const stream = await navigator.mediaDevices.getUserMedia({
         audio: {
           deviceId: selectedDevice ? { exact: selectedDevice } : undefined,
@@ -110,6 +113,12 @@ export function useWebRTC({ roomId, isBroadcaster }: UseWebRTCProps) {
 
       setAudioStream(stream);
       
+      // Wait for WebSocket connection
+      if (!wsConnected) {
+        // Give WebSocket time to connect
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+
       const pc = initializePeerConnection();
       stream.getTracks().forEach(track => {
         pc.addTrack(track, stream);
@@ -117,11 +126,6 @@ export function useWebRTC({ roomId, isBroadcaster }: UseWebRTCProps) {
 
       // Join the room
       sendMessage({ type: 'join-room', roomId });
-
-      // Create and send offer
-      const offer = await pc.createOffer();
-      await pc.setLocalDescription(offer);
-      sendMessage({ type: 'offer', roomId, data: offer });
 
       setIsConnected(true);
     } catch (error) {

@@ -17,6 +17,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Store connected clients by room
   const rooms = new Map<string, Set<WebSocketWithSession>>();
+  // Store active audio streams by room
+  const audioStreams = new Map<string, any>();
 
   // Broadcast API routes
   app.post("/api/broadcasts", async (req, res) => {
@@ -121,12 +123,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
             }
             break;
             
+          case 'listener-joined':
+            // Notify broadcaster that a new listener has joined
+            if (data.roomId) {
+              broadcastToRoom(data.roomId, {
+                type: 'listener-joined',
+                sessionId: ws.sessionId,
+                roomId: data.roomId
+              }, ws);
+            }
+            break;
+
           case 'offer':
           case 'answer':
           case 'ice-candidate':
-            // Forward WebRTC signaling to other peers in the room
-            if (ws.roomId) {
-              broadcastToRoom(ws.roomId, data, ws);
+            // Forward WebRTC signaling to specific peer
+            if (data.roomId && data.sessionId) {
+              const roomClients = rooms.get(data.roomId);
+              if (roomClients) {
+                roomClients.forEach((client) => {
+                  if (client.sessionId === data.sessionId && client.readyState === WebSocket.OPEN) {
+                    client.send(JSON.stringify(data));
+                  }
+                });
+              }
             }
             break;
         }

@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { BroadcasterPanel } from '@/components/BroadcasterPanel';
-import { ListenerInterface } from '@/components/ListenerInterface';
+import { FullAudioBroadcaster } from '@/components/FullAudioBroadcaster';
+import { FullAudioListener } from '@/components/FullAudioListener';
 import { StatusDashboard } from '@/components/StatusDashboard';
 import { NotificationCenter } from '@/components/NotificationCenter';
 import { Radio } from 'lucide-react';
@@ -79,14 +79,14 @@ export default function BroadcastPage() {
           onRetry={handleRetryConnection}
         />
 
-        {/* Broadcaster Panel */}
-        <BroadcasterPanel
+        {/* Audio Broadcaster */}
+        <FullAudioBroadcaster
           onBroadcastStart={handleBroadcastStart}
           onBroadcastStop={handleBroadcastStop}
         />
 
         {/* Listener Interface */}
-        <ListenerInterface />
+        <FullAudioListener />
 
         {/* Status Dashboard */}
         <StatusDashboard />
